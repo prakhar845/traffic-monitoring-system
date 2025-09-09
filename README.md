@@ -564,10 +564,6 @@ npm run lint
 - Update documentation
 - Test on multiple platforms
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🆘 Support
 
 ### Getting Help
@@ -577,11 +573,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 3. **Check logs** - Detailed error information available
 4. **Create an issue** - For bugs and feature requests
 
-### Contact
-
-- **Issues:** Create a GitHub issue
-- **Discussions:** Use GitHub Discussions
-- **Email:** [Your email here]
 
 ## 🎉 Acknowledgments
 
@@ -592,8 +583,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Redis** - In-memory data store
 - **Scikit-learn** - Machine learning library
 
----
+## Contributing
+Contributions are welcome! If you have suggestions for improvements, new analysis ideas, or bug fixes, please:
 
-**Happy Monitoring! 🚌✨**
-
-*Built with ❤️ for better public transport*
+1. Fork the repository.
+2. Create a new branch (git checkout -b feature/your-feature-name).
+3. Make your changes and commit them (git commit -m 'Add new feature').
+4. Push to the branch (git push origin feature/your-feature-name).
+5. Open a Pull Request.
