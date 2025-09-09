@@ -1,0 +1,20 @@
+# Database Configuration
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=your_password
+MYSQL_DATABASE=traffic_monitoring
+
+# Redis Configuration
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+
+# API Configuration
+API_HOST=0.0.0.0
+API_PORT=8000
+DEBUG=True
+
+# Model Configuration
+MODEL_UPDATE_INTERVAL=300  # seconds
+PREDICTION_HORIZON=3600    # seconds (1 hour)

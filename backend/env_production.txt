@@ -1,0 +1,59 @@
+# Production Environment Configuration
+# Real-Time Public Transport Monitoring System
+
+# Database Configuration
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=your_mysql_password
+MYSQL_DATABASE=traffic_monitoring
+
+# Redis Configuration
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=your_redis_password
+
+# API Configuration
+API_HOST=0.0.0.0
+API_PORT=8000
+DEBUG=False
+
+# Security Configuration
+JWT_SECRET_KEY=your-super-secret-jwt-key-change-this-in-production
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+REFRESH_TOKEN_EXPIRE_DAYS=7
+
+# ML Model Configuration
+MODEL_UPDATE_INTERVAL=300
+PREDICTION_HORIZON=3600
+MODEL_RETRAIN_INTERVAL=86400
+
+# Logging Configuration
+LOG_LEVEL=INFO
+LOG_FILE=traffic_monitoring.log
+MAX_LOG_SIZE=10MB
+LOG_BACKUP_COUNT=5
+
+# Performance Configuration
+MAX_CONNECTIONS=1000
+WEBSOCKET_PING_INTERVAL=30
+WEBSOCKET_PING_TIMEOUT=10
+CACHE_TTL=300
+
+# External Services (Optional)
+WEATHER_API_KEY=your_weather_api_key
+TRAFFIC_API_KEY=your_traffic_api_key
+GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+
+# Monitoring Configuration
+HEALTH_CHECK_INTERVAL=60
+METRICS_UPDATE_INTERVAL=300
+ALERT_THRESHOLD_ERRORS=10
+ALERT_THRESHOLD_LATENCY=5000
+
+# Data Retention
+LOCATION_DATA_RETENTION_HOURS=24
+PREDICTION_DATA_RETENTION_HOURS=2
+TRAFFIC_DATA_RETENTION_HOURS=6
+LOG_DATA_RETENTION_DAYS=30

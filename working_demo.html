@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚌 Traffic Monitoring System - WORKING DEMO</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            color: #667eea;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .container {
+            display: flex;
+            height: calc(100vh - 120px);
+        }
+        
+        .sidebar {
+            width: 350px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .route-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .route-card:hover {
+            background: #e3f2fd;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        
+        .route-card.active {
+            background: #667eea;
+            color: white;
+            border-color: #5a6fd8;
+        }
+        
+        .route-card h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.2em;
+        }
+        
+        .route-card p {
+            margin: 0 0 5px 0;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .route-card small {
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+        
+        .bus-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            background: #28a745;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .bus-info {
+            flex: 1;
+        }
+        
+        .bus-number {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .bus-status {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(40, 167, 69, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+        
+        .connection-status.disconnected {
+            background: rgba(220, 53, 69, 0.9);
+        }
+        
+        .stats {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚌 Real-Time Public Transport Monitoring System</h1>
+        <p>Live bus tracking with ML predictions - WORKING DEMO</p>
+    </div>
+    
+    <div class="connection-status" id="connectionStatus">🟢 Connected</div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <div class="section">
+                <h2>📊 System Status</h2>
+                <div class="stats" id="systemStats">
+                    <div class="stat-item">
+                        <span class="stat-label">Active Buses:</span>
+                        <span class="stat-value" id="activeBuses">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Routes:</span>
+                        <span class="stat-value" id="totalRoutes">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Last Update:</span>
+                        <span class="stat-value" id="lastUpdate">Never</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>🚌 Routes</h2>
+                <div id="routesList">
+                    <!-- Routes will be loaded here -->
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>🚌 Active Buses</h2>
+                <div id="busesList">
+                    <!-- Buses will be loaded here -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Global variables
+        let map;
+        let busMarkers = {};
+        let routePolylines = {};
+        let selectedRoute = null;
+        let ws = null;
+        let routes = [];
+        let buses = [];
+
+        // Initialize map
+        function initMap() {
+            map = L.map('map').setView([40.7128, -74.0060], 12);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            console.log('Map initialized');
+        }
+
+        // WebSocket connection
+        function connectWebSocket() {
+            try {
+                ws = new WebSocket('ws://localhost:8000/ws/live-updates');
+                
+                ws.onopen = function() {
+                    console.log('WebSocket connected');
+                    updateConnectionStatus(true);
+                };
+                
+                ws.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        if (data.type === 'update') {
+                            updateBuses(data.bus_locations || []);
+                            updateLastUpdate();
+                        }
+                    } catch (error) {
+                        console.error('Error parsing WebSocket message:', error);
+                    }
+                };
+                
+                ws.onclose = function() {
+                    console.log('WebSocket disconnected');
+                    updateConnectionStatus(false);
+                    // Try to reconnect after 3 seconds
+                    setTimeout(connectWebSocket, 3000);
+                };
+                
+                ws.onerror = function(error) {
+                    console.error('WebSocket error:', error);
+                    updateConnectionStatus(false);
+                };
+            } catch (error) {
+                console.error('Error connecting to WebSocket:', error);
+                updateConnectionStatus(false);
+            }
+        }
+
+        // Update connection status
+        function updateConnectionStatus(connected) {
+            const status = document.getElementById('connectionStatus');
+            if (connected) {
+                status.textContent = '🟢 Connected';
+                status.className = 'connection-status';
+            } else {
+                status.textContent = '🔴 Disconnected';
+                status.className = 'connection-status disconnected';
+            }
+        }
+
+        // Load routes
+        async function loadRoutes() {
+            try {
+                const response = await fetch('http://localhost:8000/api/routes/');
+                routes = await response.json();
+                displayRoutes();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading routes:', error);
+            }
+        }
+
+        // Load buses
+        async function loadBuses() {
+            try {
+                const response = await fetch('http://localhost:8000/api/buses/');
+                buses = await response.json();
+                displayBuses();
+                updateBuses(buses);
+                updateStats();
+            } catch (error) {
+                console.error('Error loading buses:', error);
+            }
+        }
+
+        // Display routes
+        function displayRoutes() {
+            const routesList = document.getElementById('routesList');
+            routesList.innerHTML = '';
+            
+            routes.forEach(route => {
+                const routeCard = document.createElement('div');
+                routeCard.className = 'route-card';
+                routeCard.innerHTML = `
+                    <h3>${route.route_number}</h3>
+                    <p>${route.route_name}</p>
+                    <small>${route.description}</small>
+                `;
+                routeCard.onclick = () => selectRoute(route);
+                routesList.appendChild(routeCard);
+            });
+        }
+
+        // Select route
+        function selectRoute(route) {
+            selectedRoute = route;
+            
+            // Update UI
+            document.querySelectorAll('.route-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.target.closest('.route-card').classList.add('active');
+            
+            // Center map on route
+            if (route.stops && route.stops.length > 0) {
+                const bounds = L.latLngBounds(route.stops.map(stop => [stop.latitude, stop.longitude]));
+                map.fitBounds(bounds);
+            }
+        }
+
+        // Display buses
+        function displayBuses() {
+            const busesList = document.getElementById('busesList');
+            busesList.innerHTML = '';
+            
+            buses.forEach(bus => {
+                const busItem = document.createElement('div');
+                busItem.className = 'bus-item';
+                busItem.innerHTML = `
+                    <div class="status-indicator"></div>
+                    <div class="bus-info">
+                        <div class="bus-number">${bus.bus_number}</div>
+                        <div class="bus-status">Route: ${bus.route_id}</div>
+                        ${bus.current_location ? `<div class="bus-location">Speed: ${bus.current_location.speed?.toFixed(1)} km/h</div>` : ''}
+                    </div>
+                `;
+                busesList.appendChild(busItem);
+            });
+        }
+
+        // Update buses on map
+        function updateBuses(busLocations) {
+            // Clear existing markers
+            Object.values(busMarkers).forEach(marker => map.removeLayer(marker));
+            busMarkers = {};
+            
+            // Add new markers
+            busLocations.forEach(bus => {
+                if (bus.current_location) {
+                    const marker = L.marker([bus.current_location.latitude, bus.current_location.longitude])
+                        .addTo(map)
+                        .bindPopup(`
+                            <strong>${bus.bus_number}</strong><br>
+                            Route: ${bus.route_id}<br>
+                            Speed: ${bus.current_location.speed?.toFixed(1)} km/h<br>
+                            Direction: ${bus.current_location.direction?.toFixed(0)}°<br>
+                            Last Update: ${new Date(bus.current_location.timestamp).toLocaleTimeString()}
+                        `);
+                    
+                    busMarkers[bus.id] = marker;
+                }
+            });
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('activeBuses').textContent = buses.length;
+            document.getElementById('totalRoutes').textContent = routes.length;
+        }
+
+        // Update last update time
+        function updateLastUpdate() {
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+        }
+
+        // Initialize everything
+        function init() {
+            console.log('Initializing Traffic Monitoring System...');
+            
+            // Initialize map
+            initMap();
+            
+            // Load initial data
+            loadRoutes();
+            loadBuses();
+            
+            // Connect WebSocket
+            connectWebSocket();
+            
+            // Update data every 30 seconds
+            setInterval(() => {
+                loadRoutes();
+                loadBuses();
+            }, 30000);
+            
+            console.log('System initialized successfully!');
+        }
+
+        // Start the application
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
