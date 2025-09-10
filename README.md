@@ -564,10 +564,6 @@ npm run lint
 - Update documentation
 - Test on multiple platforms
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🆘 Support
 
 ### Getting Help
@@ -577,11 +573,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 3. **Check logs** - Detailed error information available
 4. **Create an issue** - For bugs and feature requests
 
-### Contact
-
-- **Issues:** Create a GitHub issue
-- **Discussions:** Use GitHub Discussions
-- **Email:** [Your email here]
 
 ## 🎉 Acknowledgments
 
@@ -591,9 +582,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **MySQL** - Database management system
 - **Redis** - In-memory data store
 - **Scikit-learn** - Machine learning library
-
----
-
-**Happy Monitoring! 🚌✨**
-
-*Built with ❤️ for better public transport*
